@@ -1,0 +1,7 @@
+{
+  "name": "maks-and-shon-site",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}

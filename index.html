@@ -271,6 +271,63 @@
   .testi-card p.quote{font-size:15px; line-height:1.6; color:var(--ink-soft); font-weight:500; letter-spacing:-0.01em;}
   .testi-card .who{font-size:13px; color:var(--muted); font-weight:500;}
 
+  /* Ім'я над зірками */
+  .testi-card .who{font-size:15px; color:var(--ink); font-weight:600; letter-spacing:-0.01em; line-height:1.3;}
+  .testi-card .who + .stars{margin-top:-4px;}
+
+  /* Довгий відгук: згорнутий початок + «Читати далі» */
+  .testi-card .quote-clip{position:relative; display:flex; flex-direction:column; gap:12px; overflow:hidden; max-height:144px;}
+  .testi-card .quote-clip::after{content:""; position:absolute; left:0; right:0; bottom:0; height:56px; background:linear-gradient(to bottom, rgba(255,254,250,0), var(--cloud)); pointer-events:none;}
+  .testi-card .read-more{align-self:flex-start; display:inline-flex; align-items:center; gap:6px; min-height:44px; margin:-6px 0 -10px -4px; padding:0 4px; background:none; border:0; border-radius:8px; font:inherit; font-size:14px; font-weight:600; letter-spacing:-0.01em; color:#7A4F12; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color 240ms var(--ease);}
+  .testi-card .read-more:hover{color:var(--ink);}
+  .testi-card .read-more:focus-visible{outline:2px solid #7A4F12; outline-offset:2px;}
+  .testi-card .read-more .chev{display:inline-block; width:7px; height:7px; border-right:1.8px solid currentColor; border-bottom:1.8px solid currentColor; transform:translateX(-1px) rotate(-45deg); transition:transform 320ms var(--ease);}
+  .testi-card .read-more:hover .chev{transform:translateX(2px) rotate(-45deg);}
+
+  /* ВІКНО ВІДГУКУ — розгортання картки в стилі Apple */
+  .review-modal{
+    position:fixed; inset:0; z-index:300;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+    background:rgba(20,17,13,0.46);
+    -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity 420ms var(--ease), visibility 0s linear 420ms;
+  }
+  .review-modal.open{opacity:1; visibility:visible; pointer-events:auto; transition:opacity 420ms var(--ease), visibility 0s;}
+  .review-sheet{position:relative; display:flex; width:min(680px,100%); max-height:min(800px,100%);}
+  .review-sheet::before{content:""; position:absolute; inset:0; border-radius:28px; box-shadow:0 48px 96px -24px rgba(0,0,0,0.5); opacity:0; transition:opacity 520ms var(--ease);}
+  .review-modal.open .review-sheet::before{opacity:1; transition-delay:280ms;}
+  .review-surface{position:relative; flex:1; min-width:0; min-height:0; display:flex; flex-direction:column; background:var(--cloud); border-radius:28px; overflow:hidden;}
+  .review-scroll{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:48px 48px 56px; outline:none;}
+  .review-scroll:focus-visible{box-shadow:inset 0 0 0 2px #7A4F12;}
+  .review-content{opacity:0; transform:translateY(10px); transition:opacity 160ms ease, transform 160ms ease;}
+  .review-modal.open .review-content{opacity:1; transform:translateY(0); transition:opacity 420ms var(--ease) 300ms, transform 620ms var(--ease) 300ms;}
+  .review-head{padding-right:48px; margin-bottom:24px;}
+  .review-head h3{font-size:28px; line-height:1.15; letter-spacing:-0.025em; margin-bottom:8px;}
+  .review-head .stars{color:var(--gold); font-size:16px; letter-spacing:3px;}
+  .review-text{max-width:60ch;}
+  .review-text p{font-size:17px; line-height:1.65; letter-spacing:-0.012em; color:var(--ink-soft); font-weight:400; margin:0 0 1.1em;}
+  .review-text p:last-child{margin-bottom:0;}
+  .review-close{
+    position:absolute; top:16px; right:16px; z-index:2;
+    width:44px; height:44px; border-radius:50%; border:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; color:var(--ink);
+    background:rgba(240,236,227,0.86); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    transition:background 240ms var(--ease), transform 320ms var(--ease);
+  }
+  .review-close:hover{background:var(--gold-soft); transform:scale(1.06);}
+  .review-close:focus-visible{outline:2px solid #7A4F12; outline-offset:2px;}
+  .review-close svg{width:14px; height:14px;}
+  @media (max-width:640px){
+    .review-modal{padding:12px;}
+    .review-sheet{max-height:calc(100% - 0px);}
+    .review-surface,.review-sheet::before{border-radius:24px;}
+    .review-scroll{padding:32px 24px 40px;}
+    .review-head{margin-bottom:20px;}
+    .review-head h3{font-size:24px;}
+    .review-text p{font-size:16.5px;}
+  }
+
   /* BOOKING FORM */
   .booking-form{background:var(--cloud); border:1px solid var(--hair); border-radius:var(--radius-l); padding:38px; margin-bottom:22px; display:flex; flex-direction:column; gap:18px;}
   .form-row{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
@@ -574,29 +631,44 @@
       </div>
       <div class="testi-grid stagger">
         <div class="testi-card">
-          <div class="stars">★★★★★</div>
-          <p class="quote">"Дуже привітні люди, одразу відповіли і домовились про перетримку собаки. Собакін провів кілька днів на перетримці — був доглянутий, нагодований, вигуляний. Щодня ми отримували звіти, поки були зайняті. Дякую за такі послуги та сервіс. Рекомендую."</p>
           <div class="who">Roman Bykov</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">Дуже привітні люди, одразу відповіли і домовились про перетримку собаки. Собакін провів кілька днів на перетримці — був доглянутий, нагодований, вигуляний. Щодня ми отримували звіти, поки були зайняті. Дякую за такі послуги та сервіс. Рекомендую.</p>
         </div>
         <div class="testi-card">
-          <div class="stars">★★★★★</div>
-          <p class="quote">"Хороші хлопці уважно доглядають за домашнім улюбленцем, ставляться до нього як до друга."</p>
           <div class="who">Надежда Немченко</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">Хороші хлопці уважно доглядають за домашнім улюбленцем, ставляться до нього як до друга.</p>
         </div>
         <div class="testi-card">
-          <div class="stars">★★★★★</div>
-          <p class="quote">"Дуже дякую за перетримку і справді надійні руки. Залишали на 4 дні, фотозвіт гарантовано."</p>
           <div class="who">Ангеліна Сахно</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">Дуже дякую за перетримку і справді надійні руки. Залишали на 4 дні, фотозвіт гарантовано.</p>
         </div>
         <div class="testi-card">
-          <div class="stars">★★★★★</div>
-          <p class="quote">"Дуже вдячні за терпіння до нашої собачки! Будемо звертатися ще :-)"</p>
           <div class="who">Anastasiia</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">Дуже вдячні за терпіння до нашої собачки! Будемо звертатися ще :-)</p>
         </div>
         <div class="testi-card">
-          <div class="stars">★★★★★</div>
-          <p class="quote">"Ми залишились дуже задоволені, рекомендую!"</p>
           <div class="who">Юлія Голінко</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">Ми залишились дуже задоволені, рекомендую!</p>
+        </div>
+        <div class="testi-card">
+          <div class="who">Наталія Матрос</div>
+          <div class="stars">★★★★★</div>
+          <div class="quote-clip">
+            <p class="quote">Чудово, коли обставини складаються так, що тобі не доводиться надовго залишати улюбленого члена родини. Але іноді виникають ситуації, коли потрібно довірити найдорожче чужим людям. І тоді починаються пошуки, переживання, тисяча сумнівів і запитань: кому довірити свого хвостика, чи буде йому добре, чи почуватиметься він у безпеці?</p>
+            <p class="quote">Мені неймовірно пощастило знайти Маю та Максима!</p>
+            <p class="quote">Заруся пішла до них на руки одразу, без вагань, ніби давно їх знала. І для мене це було найкращим знаком.</p>
+            <p class="quote">Ми домовлялися про два тижні, але обставини внесли свої корективи, і термін перебування продовжився ще на тиждень. Мені не відмовили, не залишили сам на сам із проблемою, а з розумінням і турботою підтримали в цій ситуації. І за це я окремо вдячна!</p>
+            <p class="quote">Заруся повернулася додому доглянута, в чудовій фізичній формі, навіть трохи округлилася. Але найголовніше — я отримала не просто доглянуту собаку, а спокійну, врівноважену та емоційно задоволену дівчинку. Вона не виглядала стресованою чи наляканою, а це для мене найважливіший показник того, що їй було добре.</p>
+            <p class="quote">Адже справжня турбота про тварину — це не лише нагодувати, вигуляти й забезпечити комфорт. Це ще й увага до її емоційного стану, відчуття безпеки, любов і терпіння.</p>
+            <p class="quote">Маю та Максиме, щиро дякую вам за вашу турботу, відповідальність, людяність і тепле ставлення до Зарусі! За те, що в непростій для мене ситуації я могла бути спокійною за свого члена родини.</p>
+            <p class="quote">Ви люди, яким справді можна довірити найдорожче.</p>
+          </div>
+          <button type="button" class="read-more" aria-haspopup="dialog"><span class="read-more-label">Читати далі</span><span class="chev" aria-hidden="true"></span></button>
         </div>
       </div>
     </div>
@@ -710,6 +782,25 @@
   </div>
 </div>
 
+<div class="review-modal" id="reviewModal" aria-hidden="true">
+  <div class="review-sheet" role="dialog" aria-modal="true" aria-labelledby="reviewModalName">
+    <div class="review-surface">
+      <button type="button" class="review-close" id="reviewModalClose" aria-label="Закрити відгук">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>
+      </button>
+      <div class="review-scroll" id="reviewModalScroll" tabindex="0">
+        <div class="review-content">
+          <div class="review-head">
+            <h3 id="reviewModalName"></h3>
+            <div class="stars" id="reviewModalStars"></div>
+          </div>
+          <div class="review-text" id="reviewModalText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   const revealEls = document.querySelectorAll('.reveal, .stagger');
   const io = new IntersectionObserver((entries)=>{
@@ -718,6 +809,101 @@
     });
   }, {threshold:0.12, rootMargin:'-4% 0px -4% 0px'});
   revealEls.forEach(el=>io.observe(el));
+
+  // Відгук: «Читати далі» розгортає картку у вікно (стиль Apple)
+  (function(){
+    const modal = document.getElementById('reviewModal');
+    if(!modal) return;
+    const surface = modal.querySelector('.review-surface');
+    const scroller = document.getElementById('reviewModalScroll');
+    const closeBtn = document.getElementById('reviewModalClose');
+    const nameEl = document.getElementById('reviewModalName');
+    const starsEl = document.getElementById('reviewModalStars');
+    const textEl = document.getElementById('reviewModalText');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const EASE_OPEN = 'cubic-bezier(.19,1,.22,1)';
+    const EASE_CLOSE = 'cubic-bezier(.4,0,.2,1)';
+    let opener = null, anim = null;
+
+    const radius = ()=> parseFloat(getComputedStyle(surface).borderTopLeftRadius) || 28;
+    const full = ()=> `inset(0px 0px 0px 0px round ${radius()}px)`;
+    function fromRect(card, sheet){
+      const c = card.getBoundingClientRect();
+      const top = c.top - sheet.top, left = c.left - sheet.left;
+      const right = sheet.right - c.right, bottom = sheet.bottom - c.bottom;
+      return `inset(${top}px ${right}px ${bottom}px ${left}px round 16px)`;
+    }
+    function lockScroll(){
+      const sw = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if(sw > 0) document.body.style.paddingRight = sw + 'px';
+    }
+    function unlockScroll(){
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+
+    function open(btn){
+      if(modal.classList.contains('open')) return;
+      const card = btn.closest('.testi-card');
+      opener = btn;
+      nameEl.textContent = card.querySelector('.who').textContent;
+      starsEl.textContent = card.querySelector('.stars').textContent;
+      textEl.innerHTML = '';
+      card.querySelectorAll('.quote-clip p, p.quote').forEach(p=>{
+        const el = document.createElement('p'); el.textContent = p.textContent; textEl.appendChild(el);
+      });
+      scroller.scrollTop = 0;
+      if(anim){ anim.cancel(); anim = null; }
+
+      lockScroll();
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      closeBtn.focus({preventScroll:true});
+
+      if(!reduce){
+        const sheetRect = surface.getBoundingClientRect();
+        anim = surface.animate(
+          [{clipPath: fromRect(card, sheetRect)}, {clipPath: full()}],
+          {duration:640, easing:EASE_OPEN, fill:'backwards'}
+        );
+      }
+    }
+
+    function close(){
+      if(!modal.classList.contains('open')) return;
+      const card = opener && opener.closest('.testi-card');
+      unlockScroll();
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      if(!reduce && card){
+        const sheetRect = surface.getBoundingClientRect();
+        if(anim) anim.cancel();
+        anim = surface.animate(
+          [{clipPath: full()}, {clipPath: fromRect(card, sheetRect)}],
+          {duration:440, easing:EASE_CLOSE, fill:'forwards'}
+        );
+      }
+      if(opener) opener.focus({preventScroll:true});
+    }
+
+    document.querySelectorAll('.testi-card .read-more').forEach(btn=>{
+      btn.addEventListener('click', ()=>open(btn));
+    });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', (e)=>{ if(e.target === modal) close(); });
+    document.addEventListener('keydown', (e)=>{
+      if(!modal.classList.contains('open')) return;
+      if(e.key === 'Escape'){ e.preventDefault(); close(); return; }
+      if(e.key === 'Tab'){
+        const items = [closeBtn, scroller];
+        const idx = items.indexOf(document.activeElement);
+        e.preventDefault();
+        const next = e.shiftKey ? (idx <= 0 ? items.length-1 : idx-1) : (idx === items.length-1 ? 0 : idx+1);
+        items[next].focus({preventScroll:true});
+      }
+    });
+  })();
 
   const nav = document.querySelector('nav.dock');
   window.addEventListener('scroll', ()=>{
